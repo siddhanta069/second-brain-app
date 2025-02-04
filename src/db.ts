@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 const Types = mongoose.Types;
 
-mongoose.connect("mongodb://localhost:27017/")
+const connectToDb = process.env.MONGO_URI as string;
 
 const UserSchema = new Schema({
     username: {
