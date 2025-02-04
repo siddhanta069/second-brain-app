@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 const Types = mongoose.Types;
 
-const connectToDb = process.env.MONGO_URI as string;
+mongoose.connect("mongodb://localhost:27017/")
 
 const UserSchema = new Schema({
     username: {
@@ -13,7 +13,7 @@ const UserSchema = new Schema({
     },
     email: {
         type: String,
-        reqiured: true,
+        required: true,
         unique: true,
     },
     password: {
@@ -40,7 +40,7 @@ const ContentSchema = new Schema({
     userId: {type: Types.ObjectId, ref: "User", required: true},
 });
 
-const linkSchema = new Schema({
+const LinkSchema = new Schema({
     hash: {type: String, required: true},
     userId: {type:Types.ObjectId, ref: "User", required: true},
 });
@@ -48,5 +48,5 @@ const linkSchema = new Schema({
 export const UserModel = mongoose.model("User", UserSchema);
 export const TagModel = mongoose.model("Tag", TagSchema);
 export const ContentModel = mongoose.model("Content", ContentSchema);
-export const LinkModel = mongoose.model("Link", linkSchema);
+export const LinkModel = mongoose.model("Link", LinkSchema);
 
