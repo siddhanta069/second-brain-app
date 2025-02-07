@@ -3,8 +3,9 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
 import bcrypt from 'bcrypt';
-import { UserModel } from "./db";
+import { ContentModel, UserModel } from "./db";
 import dotenv from 'dotenv';
+import { userMiddleware, RequestWithUserId } from './middleware';
 
 dotenv.config();  // Load environment variables from .env file
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -101,7 +102,20 @@ app.post("/api/v1/signin", async (req, res) => {
     
 })
 
-app.post("/api/v1/content", (req, res) => {
+app.post("/api/v1/content", userMiddleware, async (req:RequestWithUserId, res) => {
+    const {link, type, tags, title} = req.body;
+
+    await ContentModel.create({
+        link,
+        type,
+        tags,
+        title,
+        userId: req.userId
+    })
+
+    return res.json({
+        message: "Content Created Successfully",
+    })
 
 }) 
 

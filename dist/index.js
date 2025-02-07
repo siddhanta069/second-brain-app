@@ -18,6 +18,7 @@ const zod_1 = __importDefault(require("zod"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const db_1 = require("./db");
 const dotenv_1 = __importDefault(require("dotenv"));
+const middleware_1 = require("./middleware");
 dotenv_1.default.config(); // Load environment variables from .env file
 const JWT_SECRET = process.env.JWT_SECRET;
 const app = (0, express_1.default)();
@@ -92,8 +93,19 @@ app.post("/api/v1/signin", (req, res) => __awaiter(void 0, void 0, void 0, funct
         });
     }
 }));
-app.post("/api/v1/content", (req, res) => {
-});
+app.post("/api/v1/content", middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { link, type, tags, title } = req.body;
+    yield db_1.ContentModel.create({
+        link,
+        type,
+        tags,
+        title,
+        userId: req.userId
+    });
+    return res.json({
+        message: "Content Created Successfully",
+    });
+}));
 app.get("/api/v1/content", (req, res) => {
 });
 app.delete("/api/v1/content", (req, res) => {
