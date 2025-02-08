@@ -22,3 +22,4 @@ export const userMiddleware = (req: RequestWithUserId, res:Response, next: NextF
         })
     }
 }
+
