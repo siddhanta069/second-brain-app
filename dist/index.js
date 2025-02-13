@@ -106,8 +106,14 @@ app.post("/api/v1/content", middleware_1.userMiddleware, (req, res) => __awaiter
         message: "Content Created Successfully",
     });
 }));
-app.get("/api/v1/content", (req, res) => {
-});
+app.get("/api/v1/content", middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const content = yield db_1.ContentModel.findOne({
+        userId: req.userId
+    });
+    return res.json({
+        content
+    });
+}));
 app.delete("/api/v1/content", (req, res) => {
 });
 app.post("/api/v1/brain/share", (req, res) => {

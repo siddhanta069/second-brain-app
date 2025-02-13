@@ -10,6 +10,11 @@ export interface RequestWithUserId extends Request {
 }
 export const userMiddleware = (req: RequestWithUserId, res:Response, next: NextFunction) => {
     const header = req.headers['Authorization'];
+
+    if (!req.headers.authorization) {
+        return res.status(401).json({ error: "No Authorization header provided" });
+    }
+    
     const decoded = jwt.verify(header as string, JWT_SECRET as string) as JwtPayload;
 
     if(decoded) {
