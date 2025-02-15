@@ -3,9 +3,10 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
 import bcrypt from 'bcrypt';
-import { ContentModel, UserModel } from "./db";
+import { ContentModel, UserModel, LinkModel } from "./db";
 import dotenv from 'dotenv';
 import { userMiddleware, RequestWithUserId } from './middleware';
+import {random} from './utils'
 
 dotenv.config();  // Load environment variables from .env file
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -122,7 +123,7 @@ app.post("/api/v1/content", userMiddleware, async (req:RequestWithUserId, res) =
 app.get("/api/v1/content", userMiddleware, async (req:RequestWithUserId, res) => {
     const content = await ContentModel.findOne({
         userId: req.userId
-    })
+    }).populate("userId", "username")
 
     return res.json({
         content
@@ -130,11 +131,28 @@ app.get("/api/v1/content", userMiddleware, async (req:RequestWithUserId, res) =>
 
 })
 
-app.delete("/api/v1/content", (req, res) => {
+app.delete("/api/v1/content", userMiddleware, async (req:RequestWithUserId, res) => {
+    const contentId = req.body.content;
+    await ContentModel.deleteMany({
+        contentId,
+        userId: req.userId
+        
+    })
+
+    return res.json({
+        message: "Deleted"
+    })
 
 }) 
 
-app.post("/api/v1/brain/share", (req, res) => {
+app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
+    const share = req.body.share
+    if(share) {
+        await LinkModel.create({
+            userId: req.userId,
+            hash: random(10)
+        })
+    }
 
 })
 
